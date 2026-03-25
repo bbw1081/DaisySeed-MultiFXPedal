@@ -1,2 +1,2 @@
 # DaisySeed-MultiFXPedal
-MultiFX guitar pedal built on the daisy seed platform
+WORK IN PROGRESS - I am building a multiFX guitar pedal using the daisy seed platform, still very early development 

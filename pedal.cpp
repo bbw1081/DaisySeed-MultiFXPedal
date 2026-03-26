@@ -1,19 +1,25 @@
 #include "daisy_seed.h"
 #include "daisysp.h"
 
+#include "effects/BaseEffect.h"
+#include "effects/OverdriveEffect.h"
+
+
 using namespace daisy;
 using namespace daisysp;
 
-/*
-DAISY SEED PINOUT
-A0     	<-- Potentiometer A10K ohms
-A1     	<-- SPST Momentary Footswitch
-out[0] 	<-- 1/4" jack
-in[0]  	<-- 1/4" jack
-*/
+/**
+ * DAISY SEED PINOUT
+ * A0     	<-- Potentiometer A10K ohms
+ * A1     	<-- SPST Momentary Footswitch
+ * out[0] 	<-- 1/4" jack
+ * in[0]  	<-- 1/4" jack
+ */
 
 DaisySeed hw; //daisy seed hardware
 bool bypass = true; //bypass flag
+
+OverdriveEffect od;
 
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
@@ -23,11 +29,9 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 	{
 		if(bypass) {
 			out[0][i] = in[0][i] * volume;
-			out[1][i] = in[1][i]  * volume;
 		} else {
-			//effect, currently mutes
-			out[0][i] = in[0][i] * 0;
-			out[1][i] = in[1][i]  * 0;
+			//effect
+			out[0][i] = od.Process(in[0][i]) * volume;
 		}
 	}
 }
@@ -53,6 +57,10 @@ int main(void)
 	hw.SetAudioBlockSize(4); // number of samples handled per callback
 	hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 	hw.StartAudio(AudioCallback);
+
+	//initialize overdrive
+	const float od_params[] = {0.8f};
+	od.Init(hw.AudioSampleRate(), od_params);
 
 	bool switch_held = false; //set switch held flag to 0
 

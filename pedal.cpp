@@ -4,6 +4,14 @@
 using namespace daisy;
 using namespace daisysp;
 
+/*
+DAISY SEED PINOUT
+A0     	<-- Potentiometer A10K ohms
+A1     	<-- SPST Momentary Footswitch
+out[0] 	<-- 1/4" jack
+in[0]  	<-- 1/4" jack
+*/
+
 DaisySeed hw; //daisy seed hardware
 bool bypass = true; //bypass flag
 

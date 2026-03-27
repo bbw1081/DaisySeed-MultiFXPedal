@@ -1,0 +1,43 @@
+#include "PresetManager.h"
+
+void PresetManager::Init(int sample_rate){
+    sample_rate_ = sample_rate;
+    num_presets_ = 0;
+
+    // Preset array init
+    preset_data_[0] = preset1;
+    preset_data_[1] = preset2;
+
+    num_presets_ = 2;
+    SetActivePreset(1);
+}
+
+void PresetManager::SetActivePreset(int val) {
+    if(val > 0 && val <= num_presets_) {
+        current_preset_num_ = val;
+
+        JsonDocument doc;
+        deserializeJson(doc, preset_data_[val - 1]);
+
+        current_preset_.Init(doc, sample_rate_);
+    }
+}
+
+void PresetManager::ChangePreset(int val){
+    //either increment or decrement the preset, if val is more than 1 (somehow) will not do anything
+    if (val == 1){
+        if (current_preset_num_ == num_presets_) {
+            SetActivePreset(1);
+        } else {
+            SetActivePreset(current_preset_num_ + 1);
+        }
+    } else if (val == -1){
+        if (current_preset_num_ == 1) {
+            SetActivePreset(num_presets_);
+        } else {
+            SetActivePreset(current_preset_num_ - 1);
+        }
+    }
+}
+
+float PresetManager::Process(float in) { return current_preset_.Process(in); }

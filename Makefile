@@ -3,7 +3,9 @@ TARGET = pedal
 
 # Sources
 CPP_SOURCES = pedal.cpp \
-effects/OverdriveEffect.cpp
+effects/OverdriveEffect.cpp \
+Preset.cpp \
+PresetManager.cpp
 
 # Library Locations
 LIBDAISY_DIR = ../../../Desktop/DaisyExamples/libDaisy/

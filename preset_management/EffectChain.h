@@ -1,4 +1,4 @@
-#include "effects/Effects.h"
+#include "../effects/Effects.h"
 
 static const int MAX_EFFECTS = 4;
 

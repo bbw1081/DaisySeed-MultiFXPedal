@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Preset.h"
-#include "ArduinoJson-v7.4.3.h"
+#include "../dependencies/ArduinoJson-v7.4.3.h"
 
-#include "presets/1.h"
-#include "presets/2.h"
+#include "../presets/1.h"
+#include "../presets/2.h"
 
 static const int MAX_PRESETS = 10;
 

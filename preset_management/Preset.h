@@ -1,5 +1,7 @@
-#include "ArduinoJson-v7.4.3.h"
+#include "../dependencies/ArduinoJson-v7.4.3.h"
 #include "EffectChain.h"
+
+using namespace ArduinoJson;
 
 static const int MAX_STRING = 32;
 static const int MAX_PARAMS = 6;

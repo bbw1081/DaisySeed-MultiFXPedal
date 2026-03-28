@@ -4,12 +4,12 @@ TARGET = pedal
 # Sources
 CPP_SOURCES = pedal.cpp \
 effects/OverdriveEffect.cpp \
-Preset.cpp \
-PresetManager.cpp
+preset_management/Preset.cpp \
+preset_management/PresetManager.cpp
 
 # Library Locations
-LIBDAISY_DIR = ../../../Desktop/DaisyExamples/libDaisy/
-DAISYSP_DIR = ../../../Desktop/DaisyExamples/DaisySP/
+LIBDAISY_DIR = dependencies/libDaisy/
+DAISYSP_DIR = dependencies/DaisySP/
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core

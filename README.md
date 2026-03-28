@@ -10,9 +10,13 @@ the file naming convention is numbers starting from 1 in the order in which you 
 example preset with overdrive into reverb
 
 const char preset(num)[] = R"({
+
     "name": "name",
+    
     "effects": ["overdrive", "reverb"],
+    
     "params": [[overdrive params], [reverb params]]
+    
 })";
 
 

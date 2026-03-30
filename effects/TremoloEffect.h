@@ -2,11 +2,11 @@
 
 #include "BaseEffect.h"
 
-class OverdriveEffect : public BaseEffect {
+class TremoloEffect : public BaseEffect {
 public:
     void Init(float sample_rate, const float* params) override;
     float Process(float in) override;
 
 private:
-    daisysp::Overdrive drive_;
+    daisysp::Tremolo trem_;
 };

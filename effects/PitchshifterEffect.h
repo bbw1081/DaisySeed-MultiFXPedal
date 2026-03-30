@@ -2,11 +2,11 @@
 
 #include "BaseEffect.h"
 
-class OverdriveEffect : public BaseEffect {
+class PitchshifterEffect : public BaseEffect {
 public:
     void Init(float sample_rate, const float* params) override;
     float Process(float in) override;
 
 private:
-    daisysp::Overdrive drive_;
+    daisysp::PitchShifter shift_;
 };

@@ -3,7 +3,15 @@ TARGET = pedal
 
 # Sources
 CPP_SOURCES = pedal.cpp \
+effects/AutowahEffect.cpp \
+effects/ChorusEffect.cpp \
+effects/DecimatorEffect.cpp \
+effects/FlangerEffect.cpp \
 effects/OverdriveEffect.cpp \
+effects/PhaserEffect.cpp \
+effects/PitchshifterEffect.cpp \
+effects/TremoloEffect.cpp \
+effects/WavefolderEffect.cpp \
 preset_management/Preset.cpp \
 preset_management/PresetManager.cpp
 
@@ -16,4 +24,4 @@ SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
 include $(SYSTEM_FILES_DIR)/Makefile
 
 # allows for serial printing of floats, uncomment when debugging adc
-# LDFLAGS += -u _printf_float
+LDFLAGS += -u _printf_float

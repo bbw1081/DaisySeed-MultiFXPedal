@@ -7,8 +7,13 @@ void PresetManager::Init(int sample_rate){
     // Preset array init
     preset_data_[0] = preset1;
     preset_data_[1] = preset2;
+    preset_data_[2] = preset3;
+    preset_data_[3] = preset4;
+    preset_data_[4] = preset5;
+    preset_data_[5] = preset6;
+    preset_data_[6] = preset7;
 
-    num_presets_ = 2;
+    num_presets_ = 7;
     SetActivePreset(1);
 }
 
@@ -41,3 +46,5 @@ void PresetManager::ChangePreset(int val){
 }
 
 float PresetManager::Process(float in) { return current_preset_.Process(in); }
+
+const char* PresetManager::GetName() { return current_preset_.GetName(); }

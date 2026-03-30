@@ -6,6 +6,11 @@ using namespace ArduinoJson;
 static const int MAX_STRING = 32;
 static const int MAX_PARAMS = 6;
 
+/**
+ * Class to represent a single preset
+ * 
+ * @author Richard Wilkinson
+ */
 class Preset {
 public:
 
@@ -25,6 +30,12 @@ public:
      */
     float Process(float in);
 
+    /**
+     * Returns the preset's name
+     * 
+     * @return the preset's name
+     */
+    const char* GetName();
 
 private:
     char name_[MAX_STRING];
@@ -37,5 +48,14 @@ private:
 
     EffectChain effect_chain_;
 
+    //update list to include any new effects
+    AutowahEffect wah_;
+    ChorusEffect chorus_;
+    DecimatorEffect decimator_;
+    FlangerEffect flanger_;
     OverdriveEffect od_;
+    PhaserEffect phaser_;
+    PitchshifterEffect pitch_;
+    TremoloEffect trem_;
+    WavefolderEffect folder_;
 };

@@ -1,6 +1,8 @@
 # DaisySeed-MultiFXPedal
 WORK IN PROGRESS - I am building a multiFX guitar pedal using the daisy seed platform, still very early development 
 
+to get all dependencies make sure to run `git submodule update --init --recursive`
+
 ## PRESET FORMAT
 
 the file naming convention is numbers starting from 1 in the order in which you want the presets to be on the pedal
@@ -36,5 +38,4 @@ tremolo : [depth (0-1), frequency (Hz)]
 wavefolder : [gain (float), offset (float)]
 
 
-Note: when adding new effects need to update effects/Effects.h, preset_management/preset.h & .cpp
-Note: when adding new presets need to update preset_management/PresetManager.cpp
+Note: when adding new effects update effects/Effects.h, preset_management/preset.h & .cpp; when adding new presets update preset_management/PresetManager.cpp

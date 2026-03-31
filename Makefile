@@ -23,5 +23,3 @@ DAISYSP_DIR = dependencies/DaisySP/
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
 include $(SYSTEM_FILES_DIR)/Makefile
 
-# allows for serial printing of floats, uncomment when debugging adc
-LDFLAGS += -u _printf_float

@@ -2,6 +2,6 @@
 
 const char preset4[] = R"({
     "name": "destroyed",
-    "effects": ["overdrive", "decimator"],
-    "params": [[1], [16, 2]]
+    "effects": ["decimator"],
+    "params": [[5, 2]]
 })";

@@ -3,23 +3,65 @@
 using namespace daisy;
 using namespace daisysp;
 
+//using 128x64 oled I2C display
+using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
+
 /**
  * DAISY SEED PINOUT
  * A0     	<-- Potentiometer A10K ohms
  * A1     	<-- SPST Momentary Footswitch
  * A2		<-- Rotary Encoder DT
  * A3		<-- Rotary Encoder CLk
+ * A4		<-- LED
+ * D11		<-- Display SCL
+ * D12		<-- Display SDA
  * out[0] 	<-- 1/4" jack
  * in[0]  	<-- 1/4" jack
  */
-
 DaisySeed hw; //daisy seed hardware
-bool bypass = true; //bypass flag
+MyOledDisplay display;
+
+bool bypass = false; //bypass flag
 
 PresetManager preset_manager;
 
-void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
-{
+FontDef CalculateFontSize(const char* text){
+	if(strlen(text) < 11) {
+		return Font_11x18;
+	} else if(strlen(text) < 18) {
+		return Font_7x10;
+	} else {
+		return Font_6x8;
+	}
+}
+
+void DisplayText(const char* text){
+	display.Fill(false); //clear the display
+	display.DrawRect(0, 0, 127, 63, true); //draw a rectangle around the edge
+
+	const char* spacePos = strchr(text, ' ');
+	if(spacePos == nullptr) {
+		//one line
+		display.WriteStringAligned(text, CalculateFontSize(text), Rectangle(0, 0, 128, 64), Alignment::centered, true);
+	} else {
+		//two lines
+		char line1[32];
+		char line2[32];
+
+		int i = spacePos - text;
+
+		strncpy(line1, text, i);
+		line1[i] = '\0';
+		strcpy(line2, text + i + 1);
+
+		display.WriteStringAligned(line1, CalculateFontSize(line1), Rectangle(0, 0, 128, 32), Alignment::centered, true);
+		display.WriteStringAligned(line2, CalculateFontSize(line2), Rectangle(0, 32, 128, 32), Alignment::centered, true);
+	}
+
+    display.Update();
+}
+
+void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size) {
 	float volume = hw.adc.Get(0) / 65535.0; //read volume pot
 
 	for (size_t i = 0; i < size; i++)
@@ -37,6 +79,19 @@ int main(void)
 {
 	//initialize hardware
 	hw.Init();
+
+	/** Configure the Display */
+    MyOledDisplay::Config disp_cfg;
+
+    disp_cfg.driver_config.transport_config.i2c_config.periph = I2CHandle::Config::Peripheral::I2C_1;
+    disp_cfg.driver_config.transport_config.i2c_config.mode   = I2CHandle::Config::Mode::I2C_MASTER;
+    disp_cfg.driver_config.transport_config.i2c_config.speed  = I2CHandle::Config::Speed::I2C_400KHZ;
+    disp_cfg.driver_config.transport_config.i2c_config.pin_config.scl = seed::D11;
+    disp_cfg.driver_config.transport_config.i2c_config.pin_config.sda = seed::D12;
+
+    display.Init(disp_cfg);    
+
+	DisplayText("Loading...");
 
 	//start hardware logging, used for debugging over serial output
 	hw.StartLog();
@@ -60,6 +115,10 @@ int main(void)
 	encoder_dt.Init(seed::A2, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
 	encoder_clk.Init(seed::A3, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
 
+	//init effect led
+	GPIO led;
+	led.Init(seed::A4, GPIO::Mode::OUTPUT);
+	if(!bypass){ led.Write(true); }
 
 	//initialize audio
 	hw.SetAudioBlockSize(4); // number of samples handled per callback
@@ -71,6 +130,9 @@ int main(void)
 	//start audio
 	hw.StartAudio(AudioCallback);
 
+	//set initial display value
+	DisplayText(preset_manager.GetName());
+
 	//set switch held flag to 0
 	bool switch_held = false; 
 	bool prev_clock_state = true;
@@ -81,6 +143,11 @@ int main(void)
 		if (!switch_state && !switch_held){
 			bypass = !bypass;
 			switch_held = true;
+			if(bypass){
+				led.Write(false);
+			} else {
+				led.Write(true);
+			}
 		} else if (switch_state){
 			switch_held = false;
 		}
@@ -93,11 +160,13 @@ int main(void)
 			} else {
 				preset_manager.ChangePreset(1);
 			}
+			//update the display
+			DisplayText(preset_manager.GetName());
 		}
 		prev_clock_state = current_clock_state;
 
 		//delay the system, helps act as debounce
-		System::Delay(10);
+		System::Delay(20);
 	}
 }
 

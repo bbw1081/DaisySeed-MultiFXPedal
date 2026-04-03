@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset6[] = R"({
-    "name": "chorus",
-    "effects": ["chorus"],
-    "params": [[2, 0.7, 5]]
+    "name": "soft clip",
+    "effects": ["soft_clip"],
+    "params": [[0.95, 0.5]]
 })";

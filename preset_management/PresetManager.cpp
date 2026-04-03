@@ -12,8 +12,11 @@ void PresetManager::Init(int sample_rate){
     preset_data_[4] = preset5;
     preset_data_[5] = preset6;
     preset_data_[6] = preset7;
+    preset_data_[7] = preset8;
+    preset_data_[8] = preset9;
+    preset_data_[9] = preset10;
 
-    num_presets_ = 7;
+    num_presets_ = 10;
     SetActivePreset(1);
 }
 

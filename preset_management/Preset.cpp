@@ -6,6 +6,13 @@ void Preset::Init(JsonDocument doc, int sample_rate){
 
     // Always clear the chain first, otherwise a new preset can keep previous effects.
     effect_chain_.Clear();
+    
+    // Clear all parameters to ensure clean state
+    for(int i = 0; i < MAX_EFFECTS; i++) {
+        for(int j = 0; j < MAX_PARAMS; j++) {
+            params_[i][j] = 0.0f;
+        }
+    }
 
     //parse name
     strcpy(name_, doc["name"].as<const char*>());
@@ -35,6 +42,9 @@ void Preset::Init(JsonDocument doc, int sample_rate){
         } else if (strcmp(effects_[i], "decimator") == 0) {
             decimator_.Init(sample_rate, params_[i]);
             effect_chain_.Add(&decimator_);
+        } else if (strcmp(effects_[i], "eq") == 0) {
+            eq_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&eq_);
         } else if (strcmp(effects_[i], "flanger") == 0) {
             flanger_.Init(sample_rate, params_[i]);
             effect_chain_.Add(&flanger_);
@@ -50,6 +60,24 @@ void Preset::Init(JsonDocument doc, int sample_rate){
         } else if (strcmp(effects_[i], "wavefolder") == 0) {
             folder_.Init(sample_rate, params_[i]);
             effect_chain_.Add(&folder_);
+        } else if (strcmp(effects_[i], "hard_clip") == 0) {
+            hard_clip_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&hard_clip_);
+        } else if (strcmp(effects_[i], "soft_clip") == 0) {
+            soft_clip_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&soft_clip_);
+        } else if (strcmp(effects_[i], "jfet") == 0) {
+            jfet_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&jfet_);
+        } else if (strcmp(effects_[i], "bjt") == 0) {
+            bjt_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&bjt_);
+        } else if (strcmp(effects_[i], "opamp") == 0) {
+            opamp_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&opamp_);
+        } else if (strcmp(effects_[i], "cmos") == 0) {
+            cmos_.Init(sample_rate, params_[i]);
+            effect_chain_.Add(&cmos_);
         }
     }
 }

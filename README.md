@@ -1,6 +1,8 @@
 # DaisySeed-MultiFXPedal
 WORK IN PROGRESS - I am building a multiFX guitar pedal using the daisy seed platform, still very early development 
 
+to get all dependencies make sure to run `git submodule update --init --recursive`
+
 ## PRESET FORMAT
 
 the file naming convention is numbers starting from 1 in the order in which you want the presets to be on the pedal
@@ -51,5 +53,4 @@ opamp : [drive (0-1 -> 1x-12x gain), soft_threshold (0-1), hard_threshold (0-1),
 
 cmos : [drive (0-1 -> 1x-8x gain), crunch (0-1 -> cubic non-linearity), fizz (0-1 -> 5th harmonic), pregain (0-1 -> 0.5x-2x), sag (0-1 -> envelope sag amount), tone (0-1 -> 400Hz-8200Hz LPF)]
 
-Note: when adding new effects need to update effects/Effects.h, preset_management/Preset.h & .cpp, Makefile
-Note: when adding new presets need to update preset_management/PresetManager.cpp
+Note: when adding new effects update effects/Effects.h, preset_management/preset.h & .cpp; when adding new presets update preset_management/PresetManager.cpp

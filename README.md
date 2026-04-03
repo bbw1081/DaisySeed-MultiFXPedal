@@ -3,6 +3,11 @@ WORK IN PROGRESS - I am building a multiFX guitar pedal using the daisy seed pla
 
 to get all dependencies make sure to run `git submodule update --init --recursive`
 
+## CREDITS
+While I haven't directly used any code from these repositories, they have proven to be a good inspiration for what I am making so I will credit them here
+https://github.com/bkshepherd/DaisySeedProjects
+https://github.com/Harold-Street-Pedal-Company/HSP_Protoseed
+
 ## PRESET FORMAT
 
 the file naming convention is numbers starting from 1 in the order in which you want the presets to be on the pedal

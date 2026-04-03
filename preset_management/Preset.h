@@ -4,7 +4,7 @@
 using namespace ArduinoJson;
 
 static const int MAX_STRING = 32;
-static const int MAX_PARAMS = 6;
+static const int MAX_PARAMS = 10;
 
 /**
  * Class to represent a single preset
@@ -52,10 +52,17 @@ private:
     AutowahEffect wah_;
     ChorusEffect chorus_;
     DecimatorEffect decimator_;
+    EQEffect eq_;
     FlangerEffect flanger_;
     OverdriveEffect od_;
     PhaserEffect phaser_;
     PitchshifterEffect pitch_;
     TremoloEffect trem_;
     WavefolderEffect folder_;
+    HardClipEffect hard_clip_;
+    SoftClipEffect soft_clip_;
+    JFETEffect jfet_;
+    BJTEffect bjt_;
+    OpAmpEffect opamp_;
+    CMOSEffect cmos_;
 };

@@ -5,7 +5,7 @@
 
 #include "../presets/Presets.h"
 
-static const int MAX_PRESETS = 10;
+static const int MAX_PRESETS = 20;
 
 /**
  * Class to manage currently selected preset

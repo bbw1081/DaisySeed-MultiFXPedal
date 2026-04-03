@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset7[] = R"({
-    "name": "3 effects",
-    "effects": ["autowah", "overdrive", "tremolo"],
-    "params": [[50, 0.5, 0.5], [0.4], [0.8, 4]]
+    "name": "jfet test",
+    "effects": ["jfet"],
+    "params": [[0.9, 0.8, 0.5, 0.5]]
 })";

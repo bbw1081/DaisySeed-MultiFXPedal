@@ -90,9 +90,10 @@ int main(void)
     disp_cfg.driver_config.transport_config.i2c_config.pin_config.sda = seed::D12;
 
     display.Init(disp_cfg);    
-
-	DisplayText("Loading...");
-
+    display.Fill(false);
+    display.Update();
+    System::Delay(100);
+    
 	//start hardware logging, used for debugging over serial output
 	hw.StartLog();
 
@@ -148,6 +149,7 @@ int main(void)
 			} else {
 				led.Write(true);
 			}
+			DisplayText(preset_manager.GetName());
 		} else if (switch_state){
 			switch_held = false;
 		}
@@ -165,7 +167,7 @@ int main(void)
 		}
 		prev_clock_state = current_clock_state;
 
-		//delay the system, helps act as debounce
+		//delay the system, helps act as debounce and gives I2C time to work
 		System::Delay(20);
 	}
 }

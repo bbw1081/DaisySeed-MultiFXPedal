@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset5[] = R"({
-    "name": "flanger",
-    "effects": ["flanger"],
-    "params": [[2, 0.7, 0.1]]
+    "name": "hard clip",
+    "effects": ["hard_clip"],
+    "params": [[0.9, 0.5, 0.5]]
 })";

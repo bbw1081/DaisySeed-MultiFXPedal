@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset1[] = R"({
-    "name": "heavy overdrive",
+    "name": "overdrive",
     "effects": ["overdrive"],
-    "params": [[0.8]]
+    "params": [[0.7]]
 })";

@@ -20,7 +20,7 @@ void SoftClipEffect::Init(float sample_rate, const float* params) {
 
 float SoftClipEffect::Process(float in) {
     // 1) Apply aggressive input pre-gain for strong distortion
-    float boosted = in * 25.0f;
+    float boosted = in * 50.0f;
     
     // 2) Apply drive (pre-gain)
     float driven = boosted * drive_;

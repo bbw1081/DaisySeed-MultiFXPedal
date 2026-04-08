@@ -1,10 +1,12 @@
 # DaisySeed-MultiFXPedal
-WORK IN PROGRESS - I am building a multiFX guitar pedal using the daisy seed platform, still very early development 
+A multi-effects guitar pedal platform built on the daisy seed hardware. Still in active development so expect changes 
+
+## DEPENDENCIES
 
 to get all dependencies make sure to run `git submodule update --init --recursive`
 
 ## CREDITS
-While I haven't directly used any code from these repositories, they have proven to be a good inspiration for what I am making so I will credit them here:
+While I haven't directly used any code from these repositories, they have given me inspiration for both the architecture and effects of my project:
 
 https://github.com/bkshepherd/DaisySeedProjects
 
@@ -12,9 +14,9 @@ https://github.com/Harold-Street-Pedal-Company/HSP_Protoseed
 
 ## PRESET FORMAT
 
-the file naming convention is numbers starting from 1 in the order in which you want the presets to be on the pedal
+The file naming convention is numbers starting from 1 in the order in which you want the presets to be on the pedal
 
-example preset
+Example preset:
 
 ```
 const char preset[] = R"({
@@ -24,7 +26,7 @@ const char preset[] = R"({
 })";
 ```
 
-### Current Possible Effects
+## Current Effects
 
 overdrive : [drive_amount (0-1)]
 
@@ -46,7 +48,7 @@ tremolo : [depth (0-1), frequency (Hz)]
 
 wavefolder : [gain (float), offset (float)]
 
-/**Distortion Effects: Inspired by https://github.com/Harold-Street-Pedal-Company/HSP_Protoseed**/
+/** Distortion Effects: Inspired by https://github.com/Harold-Street-Pedal-Company/HSP_Protoseed **/
 
 hard_clip : [drive (0-1 -> 1x-10x gain), tone (0-1 -> 400Hz-8200Hz LPF), symmetry (0-1 -> soft to hard clipping)]
 

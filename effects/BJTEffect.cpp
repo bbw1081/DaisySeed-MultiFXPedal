@@ -30,7 +30,7 @@ void BJTEffect::Init(float sample_rate, const float* params) {
 float BJTEffect::Process(float in) {
 
     // 1) Apply drive
-    float driven = in * drive_;
+    float driven = in * drive_ * 50.0f;
     
     // 3) Diode-equation style soft clipping
     // Approximates: I = Is * (exp(V/Vt) - 1)

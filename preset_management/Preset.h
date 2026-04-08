@@ -48,21 +48,23 @@ private:
 
     EffectChain effect_chain_;
 
-    //update list to include any new effects
-    AutowahEffect wah_;
-    ChorusEffect chorus_;
-    DecimatorEffect decimator_;
-    EQEffect eq_;
-    FlangerEffect flanger_;
-    OverdriveEffect od_;
-    PhaserEffect phaser_;
-    PitchshifterEffect pitch_;
-    TremoloEffect trem_;
-    WavefolderEffect folder_;
-    HardClipEffect hard_clip_;
-    SoftClipEffect soft_clip_;
-    JFETEffect jfet_;
-    BJTEffect bjt_;
-    OpAmpEffect opamp_;
-    CMOSEffect cmos_;
+    // Pointers to shared effect instances (owned by PresetManager)
+    AutowahEffect* wah_;
+    BJTEffect* bjt_;
+    ChorusEffect* chorus_;
+    CMOSEffect* cmos_;
+    DecimatorEffect* decimator_;
+    EQEffect* eq_;
+    FlangerEffect* flanger_;
+    HardClipEffect* hard_clip_;
+    JFETEffect* jfet_;
+    OpAmpEffect* opamp_;
+    OverdriveEffect* od_;
+    PhaserEffect* phaser_;
+    PitchshifterEffect* pitch_;
+    SoftClipEffect* soft_clip_;
+    TremoloEffect* trem_;
+    WavefolderEffect* folder_;
+
+    friend class PresetManager;  // Allow PresetManager to set pointers
 };

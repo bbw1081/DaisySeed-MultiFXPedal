@@ -29,7 +29,7 @@ void OpAmpEffect::Init(float sample_rate, const float* params) {
 
 float OpAmpEffect::Process(float in) {
     // 1) Apply drive
-    float driven = in * drive_;
+    float driven = in * drive_ * 50.0f;
     
     // 2) Soft clipping using exponential saturation
     float soft;

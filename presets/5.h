@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset5[] = R"({
-    "name": "hard clip",
-    "effects": ["hard_clip"],
-    "params": [[0.9, 0.5, 0.5]]
+    "name": "v distortion",
+    "effects": ["hard_clip", "eq"],
+    "params": [[0.9, 0.5, 0.5], [1, 0.5, 0, -0.5, 0, 0, -0.5, 0, 0.5, 1]]
 })";

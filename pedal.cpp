@@ -18,6 +18,7 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
  * out[0] 	<-- 1/4" jack
  * in[0]  	<-- 1/4" jack
  */
+
 DaisySeed hw; //daisy seed hardware
 MyOledDisplay display;
 
@@ -25,6 +26,9 @@ bool bypass = false; //bypass flag
 
 PresetManager preset_manager;
 
+/**
+ * Calculates the maximum font size based on the number of characters in a line
+ */
 FontDef CalculateFontSize(const char* text){
 	if(strlen(text) < 11) {
 		return Font_11x18;
@@ -35,6 +39,9 @@ FontDef CalculateFontSize(const char* text){
 	}
 }
 
+/**
+ * Displays a string to the screen, can be 1 word or 2
+ */
 void DisplayText(const char* text){
 	display.Fill(false); //clear the display
 	display.DrawRect(0, 0, 127, 63, true); //draw a rectangle around the edge
@@ -61,6 +68,9 @@ void DisplayText(const char* text){
     display.Update();
 }
 
+/**
+ * Process the audio
+ */
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size) {
 	float volume = hw.adc.Get(0) / 65535.0; //read volume pot
 
@@ -93,11 +103,8 @@ int main(void)
     display.Fill(false);
     display.Update();
     System::Delay(100);
-    
-	//start hardware logging, used for debugging over serial output
-	hw.StartLog();
 
-	//initialize ADC
+	/** initialize peripheral inputs and outputs **/
 	const int num_adc_channels = 1; //number of adc channels in use
 	AdcChannelConfig adc_config[num_adc_channels];
 
@@ -121,7 +128,7 @@ int main(void)
 	led.Init(seed::A4, GPIO::Mode::OUTPUT);
 	if(!bypass){ led.Write(true); }
 
-	//initialize audio
+	/** initialize audio **/
 	hw.SetAudioBlockSize(4); // number of samples handled per callback
 	hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 
@@ -131,12 +138,12 @@ int main(void)
 	//start audio
 	hw.StartAudio(AudioCallback);
 
-	//set initial display value
+	/** set initial values **/
+
 	DisplayText(preset_manager.GetName());
 
-	//set switch held flag to 0
-	bool switch_held = false; 
-	bool prev_clock_state = true;
+	bool switch_held = false; //set switch held flag to 0
+	bool prev_clock_state = true; //set rotary encoder default clock state
 
 	while(1) {
 		//switch processing
@@ -154,6 +161,7 @@ int main(void)
 			switch_held = false;
 		}
 
+		//rotary encoder processing
 		bool current_clock_state = encoder_clk.Read();
 		if (current_clock_state != prev_clock_state && !current_clock_state){
 			bool current_dt_state = encoder_dt.Read();
@@ -167,8 +175,8 @@ int main(void)
 		}
 		prev_clock_state = current_clock_state;
 
-		//delay the system, helps act as debounce and gives I2C time to work
-		System::Delay(20);
+		//delay the system, helps act as debounce
+		System::Delay(50);
 	}
 }
 

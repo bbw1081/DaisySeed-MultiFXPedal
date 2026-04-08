@@ -3,7 +3,7 @@
 static const int MAX_EFFECTS = 4;
 
 /**
- * Class to represent an effect chain
+ * Class to represent the effect chain
  * 
  * @author Richard Wilkinson
  */

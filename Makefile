@@ -1,8 +1,7 @@
 # Project Name
 TARGET = pedal
 
-# Optimization: Use -Os (optimize for size) instead of default -O2 (optimize for speed)
-# This helps fit all the distortion effects into the limited FLASH memory
+# Optimization: Use -Os (optimize for size)
 OPT = -Os
 
 # Sources

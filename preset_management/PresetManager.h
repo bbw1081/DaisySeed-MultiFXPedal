@@ -2,6 +2,7 @@
 
 #include "Preset.h"
 #include "../dependencies/ArduinoJson-v7.4.3.h"
+#include "../effects/Effects.h"
 
 #include "../presets/Presets.h"
 
@@ -53,10 +54,31 @@ private:
 
     const char* preset_data_[MAX_PRESETS];
 
+    // Shared effect instances (instantiated once, reused across presets)
+    AutowahEffect wah_;
+    BJTEffect bjt_;
+    ChorusEffect chorus_;
+    CMOSEffect cmos_;
+    DecimatorEffect decimator_;
+    EQEffect eq_;
+    FlangerEffect flanger_;
+    HardClipEffect hard_clip_;
+    JFETEffect jfet_;
+    OpAmpEffect opamp_;
+    OverdriveEffect od_;
+    PhaserEffect phaser_;
+    PitchshifterEffect pitch_;
+    SoftClipEffect soft_clip_;
+    TremoloEffect trem_;
+    WavefolderEffect folder_;
+
+
     /**
      * Sets the active preset to the value input
      * 
      * @param val the preset number to set
      */
     void SetActivePreset(int val);
+
+    friend class Preset;  // Allow Preset to access shared effect instances
 };

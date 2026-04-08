@@ -3,5 +3,5 @@
 const char preset3[] = R"({
     "name": "chorus",
     "effects": ["chorus"],
-    "params": [[2, 0.7, 5]]
+    "params": [[2, 0.6, 0.9]]
 })";

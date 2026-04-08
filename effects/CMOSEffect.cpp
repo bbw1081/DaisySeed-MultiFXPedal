@@ -33,7 +33,7 @@ void CMOSEffect::Init(float sample_rate, const float* params) {
 
 float CMOSEffect::Process(float in) {
     // 1) Apply aggressive input pre-gain for strong distortion
-    float boosted = in * 25.0f;
+    float boosted = in * 50.0f;
     
     // 2) Apply pregain
     float pregained = boosted * pregain_;

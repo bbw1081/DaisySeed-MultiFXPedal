@@ -24,6 +24,24 @@ void PresetManager::SetActivePreset(int val) {
     if(val > 0 && val <= num_presets_) {
         current_preset_num_ = val;
 
+        // Set the pointers to shared effect instances in the preset
+        current_preset_.wah_ = &wah_;
+        current_preset_.bjt_ = &bjt_;
+        current_preset_.chorus_ = &chorus_;
+        current_preset_.cmos_ = &cmos_;
+        current_preset_.decimator_ = &decimator_;
+        current_preset_.eq_ = &eq_;
+        current_preset_.flanger_ = &flanger_;
+        current_preset_.hard_clip_ = &hard_clip_;
+        current_preset_.jfet_ = &jfet_;
+        current_preset_.opamp_ = &opamp_;
+        current_preset_.od_ = &od_;
+        current_preset_.phaser_ = &phaser_;
+        current_preset_.pitch_ = &pitch_;
+        current_preset_.soft_clip_ = &soft_clip_;
+        current_preset_.trem_ = &trem_;
+        current_preset_.folder_ = &folder_;
+
         JsonDocument doc;
         deserializeJson(doc, preset_data_[val - 1]);
 

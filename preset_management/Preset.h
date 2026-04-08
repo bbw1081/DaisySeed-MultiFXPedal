@@ -65,6 +65,8 @@ private:
     SoftClipEffect* soft_clip_;
     TremoloEffect* trem_;
     WavefolderEffect* folder_;
+    DelayEffect* delay_;
+    ReverbEffect* reverb_;
 
     friend class PresetManager;  // Allow PresetManager to set pointers
 };

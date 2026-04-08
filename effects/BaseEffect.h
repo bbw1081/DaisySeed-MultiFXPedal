@@ -1,7 +1,11 @@
 #pragma once
 
+
+#include "daisy_seed.h"
 #include "daisysp.h"
 #include <stddef.h>
+
+using namespace daisy;
 
 /**
  * Interface class for all effect types

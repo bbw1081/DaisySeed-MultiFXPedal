@@ -28,25 +28,30 @@ const char preset[] = R"({
 
 ## Current Effects
 
-overdrive : [drive_amount (0-1)]
-
 autowah : [dry_wet (0-100), level (0-1), wah (0-1)]
 
 chorus : [delay (ms), feedback (0-1), lfo frequency (Hz)]
 
 decimator : [bits to crush (0-16), downsample factor (float)]
 
+delay : [delay time (ms, up to 1000), feedback(0-1), mix(0-1)]
+
 eq : [31Hz (0-1), 62Hz (0-1), 125Hz (0-1), 250Hz (0-1), 500Hz (0-1), 1kHz (0-1), 2kHz (0-1), 4kHz (0-1), 8kHz (0-1), 16kHz (0-1)] - 10-band parametric EQ (0.5 = no change, -12dB to +12dB range)
 
 flanger : [delay (ms), feedback (0-1), lfo frequency (Hz)]
+
+overdrive : [drive_amount (0-1)]
 
 phaser : [feedback (0-1), frequency (Hz), lfo frequency (Hz), poles (1-8)]
 
 pitchshifter : [size (uint32_t), fun (float), transpose (semitones)]
 
+reverb : [feedback (0-1), LpFrequency (0 - 24kHz)]
+
 tremolo : [depth (0-1), frequency (Hz)]
 
 wavefolder : [gain (float), offset (float)]
+
 
 /** Distortion Effects: Inspired by https://github.com/Harold-Street-Pedal-Company/HSP_Protoseed **/
 

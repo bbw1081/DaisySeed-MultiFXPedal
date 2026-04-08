@@ -23,7 +23,9 @@ effects/SoftClipEffect.cpp \
 effects/TremoloEffect.cpp \
 effects/WavefolderEffect.cpp \
 preset_management/Preset.cpp \
-preset_management/PresetManager.cpp
+preset_management/PresetManager.cpp \
+effects/ReverbEffect.cpp \
+effects/DelayEffect.cpp
 
 # Library Locations
 LIBDAISY_DIR = dependencies/libDaisy/

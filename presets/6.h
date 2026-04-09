@@ -3,5 +3,5 @@
 const char preset6[] = R"({
     "name": "delay test",
     "effects": ["delay"],
-    "params": [[360, 0.2, 1]]
+    "params": [[360, 0.2, 0.5]]
 })";

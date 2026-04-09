@@ -31,6 +31,9 @@ effects/DelayEffect.cpp
 LIBDAISY_DIR = dependencies/libDaisy/
 DAISYSP_DIR = dependencies/DaisySP/
 
+# Enable DaisySP LGPL features (required for ReverbSc)
+USE_DAISYSP_LGPL = 1
+
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
 include $(SYSTEM_FILES_DIR)/Makefile

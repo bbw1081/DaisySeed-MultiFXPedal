@@ -15,11 +15,15 @@ void Preset::Init(JsonDocument doc, int sample_rate){
     }
 
     //parse name
-    strcpy(name_, doc["name"].as<const char*>());
+    if(doc["name"]){
+        strncpy(name_, doc["name"].as<const char*>(), MAX_STRING - 1);
+        name_[MAX_STRING - 1] = '\0';
+    }
     
     //parse effects and parameters
     for (size_t i = 0; i < doc["effects"].size() && i < MAX_EFFECTS; ++i){
-        strcpy(effects_[i], doc["effects"][i].as<const char*>());
+        strncpy(effects_[i], doc["effects"][i].as<const char*>(), MAX_STRING - 1);
+        effects_[i][MAX_STRING - 1] = '\0';
         effect_count_++;
 
         for (size_t j = 0; j < doc["params"][i].size() && j < MAX_PARAMS; ++j) {
@@ -78,6 +82,12 @@ void Preset::Init(JsonDocument doc, int sample_rate){
         } else if (strcmp(effects_[i], "cmos") == 0) {
             cmos_->Init(sample_rate, params_[i]);
             effect_chain_.Add(cmos_);
+        } else if (strcmp(effects_[i], "reverb") == 0) {
+            reverb_->Init(sample_rate, params_[i]);
+            effect_chain_.Add(reverb_);
+        } else if (strcmp(effects_[i], "delay") == 0) {
+            delay_->Init(sample_rate, params_[i]);
+            effect_chain_.Add(delay_);
         }
     }
 }

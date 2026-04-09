@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset6[] = R"({
-    "name": "soft clip",
-    "effects": ["soft_clip"],
-    "params": [[0.95, 0.5]]
+    "name": "delay test",
+    "effects": ["delay"],
+    "params": [[360, 0.2, 0.5]]
 })";

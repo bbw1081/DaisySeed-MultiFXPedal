@@ -13,6 +13,8 @@
 #include "PitchshifterEffect.h"
 #include "TremoloEffect.h"
 #include "WavefolderEffect.h"
+#include "ReverbEffect.h"
+#include "DelayEffect.h"
 
 //distortion effects (HSP_Protoseed inspired)
 #include "HardClipEffect.h"

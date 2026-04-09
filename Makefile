@@ -23,11 +23,16 @@ effects/SoftClipEffect.cpp \
 effects/TremoloEffect.cpp \
 effects/WavefolderEffect.cpp \
 preset_management/Preset.cpp \
-preset_management/PresetManager.cpp
+preset_management/PresetManager.cpp \
+effects/ReverbEffect.cpp \
+effects/DelayEffect.cpp
 
 # Library Locations
 LIBDAISY_DIR = dependencies/libDaisy/
 DAISYSP_DIR = dependencies/DaisySP/
+
+# Enable DaisySP LGPL features (required for ReverbSc)
+USE_DAISYSP_LGPL = 1
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core

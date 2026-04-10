@@ -1,7 +1,7 @@
 #pragma once
 
 const char preset7[] = R"({
-    "name": "light reverb",
-    "effects": ["reverb"],
-    "params": [[0.4, 3000]]
+    "name": "reverse delay",
+    "effects": ["reversedelay"],
+    "params": [[360, 0.2, 0.5]]
 })";

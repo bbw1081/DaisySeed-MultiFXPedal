@@ -67,6 +67,7 @@ private:
     WavefolderEffect* folder_;
     DelayEffect* delay_;
     ReverbEffect* reverb_;
+    ReverseDelayEffect* revdelay_;
 
     friend class PresetManager;  // Allow PresetManager to set pointers
 };

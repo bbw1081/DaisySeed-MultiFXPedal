@@ -43,6 +43,7 @@ void PresetManager::SetActivePreset(int val) {
         current_preset_.folder_ = &folder_;
         current_preset_.reverb_ = &reverb_;
         current_preset_.delay_ = &delay_;
+        current_preset_.revdelay_ = &revdelay_;
 
         JsonDocument doc;
         deserializeJson(doc, preset_data_[val - 1]);

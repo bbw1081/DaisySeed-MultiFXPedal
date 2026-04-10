@@ -9,4 +9,6 @@ public:
 
 private:
     daisysp::PitchShifter shift_;
+
+    float mix_;
 };

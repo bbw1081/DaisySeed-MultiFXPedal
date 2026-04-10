@@ -9,7 +9,7 @@ void DelayEffect::Init(float sample_rate, const float* params){
 
     delay_->Init();
 
-    float samples = (params[0] / 1000.0f) * sample_rate_;
+    float samples = params[0] * 48.0f;
     delay_->SetDelay(samples);
 
     feedback_ = params[1];

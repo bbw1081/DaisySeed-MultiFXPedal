@@ -25,7 +25,8 @@ effects/WavefolderEffect.cpp \
 preset_management/Preset.cpp \
 preset_management/PresetManager.cpp \
 effects/ReverbEffect.cpp \
-effects/DelayEffect.cpp
+effects/DelayEffect.cpp \
+effects/ReverseDelayEffect.cpp
 
 # Library Locations
 LIBDAISY_DIR = dependencies/libDaisy/

@@ -73,6 +73,7 @@ private:
     WavefolderEffect folder_;
     DelayEffect delay_;
     ReverbEffect reverb_;
+    ReverseDelayEffect revdelay_;
 
 
     /**

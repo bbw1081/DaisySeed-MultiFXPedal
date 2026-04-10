@@ -176,7 +176,7 @@ int main(void)
 		prev_clock_state = current_clock_state;
 
 		//delay the system, helps act as debounce
-		System::Delay(50);
+		System::Delay(20);
 	}
 }
 

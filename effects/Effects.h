@@ -15,8 +15,7 @@
 #include "WavefolderEffect.h"
 #include "ReverbEffect.h"
 #include "DelayEffect.h"
-
-//distortion effects (HSP_Protoseed inspired)
+#include "ReverseDelayEffect.h"
 #include "HardClipEffect.h"
 #include "SoftClipEffect.h"
 #include "JFETEffect.h"

@@ -88,6 +88,9 @@ void Preset::Init(JsonDocument doc, int sample_rate){
         } else if (strcmp(effects_[i], "delay") == 0) {
             delay_->Init(sample_rate, params_[i]);
             effect_chain_.Add(delay_);
+        } else if (strcmp(effects_[i], "reversedelay") == 0) {
+            revdelay_->Init(sample_rate, params_[i]);
+            effect_chain_.Add(revdelay_);
         }
     }
 }

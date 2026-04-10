@@ -1,6 +1,8 @@
 # DaisySeed-MultiFXPedal
 A multi-effects guitar pedal platform built on the daisy seed hardware. Still in active development so expect changes 
 
+Demo of pedal in current state: https://youtu.be/VmVrhw8N-UY?si=b-0G8jv6qiLK1jTA
+
 ## DEPENDENCIES
 
 to get all dependencies make sure to run `git submodule update --init --recursive`

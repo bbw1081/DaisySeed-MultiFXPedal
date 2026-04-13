@@ -27,23 +27,23 @@ void EQEffect::Init(float sample_rate, const float* params) {
 
 float EQEffect::Process(float in) {
     float out = in;
-    float sum = 0.0f;
     
     // Process through all EQ bands and mix
     for (int i = 0; i < NUM_BANDS; i++) {
         filters_[i].Process(in);
         
-        // Get the peak (band-pass) output
+        // Get the peak (peaking filter) output
         float peak_out = filters_[i].Peak();
         
         // Convert gain from dB to linear
         float gain_linear = powf(10.0f, gains_[i] / 20.0f);
         
-        // Mix: original + (peak * gain - 1)
-        // When gain = 0 dB (gain_linear = 1), we add peak (boost)
-        // Better approach: blend between bypass and boosted version
-        sum += peak_out * (gain_linear - 1.0f);
+        // Add the boosted/cut band signal to the output
+        // When gain_linear = 1 (0 dB), add nothing (peak_out * 0)
+        // When gain_linear > 1 (boost), add the boosted peak signal
+        // When gain_linear < 1 (cut), subtract the band
+        out += peak_out * (gain_linear - 1.0f);
     }
     
-    return out + sum * 0.1f;  // Scale down the sum to prevent clipping
+    return out;
 }

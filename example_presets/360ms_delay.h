@@ -1,6 +1,6 @@
 #pragma once
 
-const char preset6[] = R"({
+const char preset[] = R"({
     "name": "360ms delay",
     "effects": ["delay"],
     "params": [[360, 0.2, 0.5]]

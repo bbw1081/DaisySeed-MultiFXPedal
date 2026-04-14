@@ -1,6 +1,6 @@
 #pragma once
 
-const char preset7[] = R"({
+const char preset[] = R"({
     "name": "reverse delay",
     "effects": ["reversedelay"],
     "params": [[360, 0.2, 0.5]]

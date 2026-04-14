@@ -1,6 +1,6 @@
 #pragma once
 
-const char preset8[] = R"({
+const char preset[] = R"({
     "name": "heavy reverb",
     "effects": ["reverb"],
     "params": [[0.6, 10000]]

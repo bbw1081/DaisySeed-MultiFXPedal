@@ -17,7 +17,7 @@
  */
 #include "../effects/Effects.h"
 
-static const int MAX_EFFECTS = 4;
+static const int MAX_EFFECTS = 5;
 
 /**
  * Class to represent the effect chain

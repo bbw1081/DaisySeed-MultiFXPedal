@@ -3,6 +3,10 @@ A multi-effects guitar pedal platform built on the daisy seed hardware. Still in
 
 Demo of pedal in current state: https://youtu.be/VmVrhw8N-UY
 
+Repository of example presets: https://github.com/bbw1081/Example-DaisySeed-Presets
+
+AI model for preset creation: https://github.com/bbw1081/Guitar-Preset-AI
+
 ## DEPENDENCIES
 
 to get all dependencies make sure to run `git submodule update --init --recursive`

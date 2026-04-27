@@ -1,8 +1,8 @@
 #pragma once
 
 const char preset5[] = R"({
-    "name": "v distortion",
-    "effects": ["hard_clip", "eq"],
-    "params": [[0.9, 0.5, 0.5], [1, 0.5, 0, -0.5, 0, 0, -0.5, 0, 0.5, 1]]
-    "description": "hard clipping distortion with a v-shaped eq"
+    "name": "heavy fuzz",
+    "effects": ["bjt"],
+    "params": [[1, 1, 1, 1, 1]],
+    "description": "heavy bjt fuzz tone with everything dimed"
 })";

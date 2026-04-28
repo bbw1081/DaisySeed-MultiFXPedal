@@ -30,6 +30,7 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
  * A2		<-- Rotary Encoder DT
  * A3		<-- Rotary Encoder CLk
  * A4		<-- LED
+ * A5		<-- Rotary Encoder Push Button
  * D11		<-- Display SCL
  * D12		<-- Display SDA
  * out[0] 	<-- 1/4" jack
@@ -39,9 +40,153 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
 DaisySeed hw; //daisy seed hardware
 MyOledDisplay display;
 
-bool bypass = false; //bypass flag
+//tuner state
+#define TUNER_BUFFER_SIZE 2048
+float tuner_buffer[TUNER_BUFFER_SIZE];
+int tuner_buffer_index = 0;
+bool tuner_buffer_ready = false;
+
+enum PedalState { STATE_BYPASS, STATE_EFFECT, STATE_TUNER };
+PedalState current_state = STATE_EFFECT;
+PedalState pre_tuner = STATE_EFFECT;
+
+//Note reference struct for tuner
+struct NoteRef {
+	const char* name;
+	float freq;
+};
+
+const NoteRef NOTE_TABLE[] = {
+    // E1 octave
+    {"E1",  41.20f},  {"F1",  43.65f},  {"F#1", 46.25f},  {"G1",  49.00f},
+    {"G#1", 51.91f},  {"A1",  55.00f},  {"A#1", 58.27f},  {"B1",  61.74f},
+    {"C2",  65.41f},  {"C#2", 69.30f},  {"D2",  73.42f},  {"D#2", 77.78f},
+
+    // E2 octave
+    {"E2",  82.41f},  {"F2",  87.31f},  {"F#2", 92.50f},  {"G2",  98.00f},
+    {"G#2", 103.83f}, {"A2",  110.00f}, {"A#2", 116.54f}, {"B2",  123.47f},
+    {"C3",  130.81f}, {"C#3", 138.59f}, {"D3",  146.83f}, {"D#3", 155.56f},
+
+    // E3 octave
+    {"E3",  164.81f}, {"F3",  174.61f}, {"F#3", 185.00f}, {"G3",  196.00f},
+    {"G#3", 207.65f}, {"A3",  220.00f}, {"A#3", 233.08f}, {"B3",  246.94f},
+    {"C4",  261.63f}, {"C#4", 277.18f}, {"D4",  293.66f}, {"D#4", 311.13f},
+
+    // E4 octave
+    {"E4",  329.63f}, {"F4",  349.23f}, {"F#4", 369.99f}, {"G4",  392.00f},
+    {"G#4", 415.30f}, {"A4",  440.00f}, {"A#4", 466.16f}, {"B4",  493.88f},
+    {"C5",  523.25f}, {"C#5", 554.37f}, {"D5",  587.33f}, {"D#5", 622.25f},
+
+    // E5 octave
+    {"E5",  659.25f}, {"F5",  698.46f}, {"F#5", 739.99f}, {"G5",  783.99f},
+    {"G#5", 830.61f}, {"A5",  880.00f}, {"A#5", 932.33f}, {"B5",  987.77f},
+    {"C6",  1046.50f},{"C#6", 1108.73f},{"D6",  1174.66f},{"D#6", 1244.51f},
+    {"E6",  1318.51f},
+};
+const int NOTE_TABLE_SIZE = sizeof(NOTE_TABLE) / sizeof(NOTE_TABLE[0]);
 
 PresetManager preset_manager;
+
+/**
+ * Detects input pitch using autocorrelation
+ */
+float DetectPitch(float* buffer, int size, float sample_rate){
+	int min_period = (int)(sample_rate / 1000.0f);
+	int max_period = (int)(sample_rate / 35.0f);
+
+	float best_correlation = -1.0f;
+	float best_period = 0;
+
+	for(int period = min_period; period < max_period && period < size / 2; period++){
+		float correlation = 0.0f;
+		float norm = 0.0f;
+
+		for(int i = 0; i < size - period; i++){
+			correlation += buffer[i] * buffer[i + period];
+			norm += buffer[i] * buffer[i];
+		}
+
+		if(norm > 0.0f) correlation /= norm;
+
+		if (correlation > best_correlation) {
+			best_correlation = correlation;
+			best_period = period;
+		}
+	}
+
+	//weak correlation
+	if (best_correlation < 0.3f || best_period == 0) return 0.0f;
+
+	return sample_rate / (float)best_period;
+}
+
+/**
+ * finds the nearest note and the offset in cents
+ */
+void FindNearestNote(float freq, const char** note_name, float* cents) {
+	if(freq <= 0.0f) {
+		*note_name = "--";
+		*cents = 0.0f;
+		return;
+	}
+
+	float best_distance = 1e9f;
+	int best_index = 0;
+
+	for (int i = 0; i < NOTE_TABLE_SIZE; i++) {
+		float distance = fabsf(freq - NOTE_TABLE[i].freq);
+		if (distance < best_distance) {
+			best_distance = distance;
+			best_index = i;
+		}
+	}
+
+	*note_name = NOTE_TABLE[best_index].name;
+
+	*cents = 1200.0f * log2f(freq / NOTE_TABLE[best_index].freq);
+}
+
+void UpdateTunerDisplay(const char* note, float cents) {
+	display.Fill(false);
+
+	//draw the border
+	display.DrawRect(0, 0, 127, 63, true);
+
+	//write note name
+	display.WriteStringAligned(note, Font_11x18, Rectangle(0, 4, 128, 24), Alignment::centered, true);
+
+	//tuning bars along bottom of screen
+	const int NUM_BARS = 13;
+	const int CENTER_BAR = 6;
+	const int BAR_W = 7;
+	const int BAR_GAP = 2;
+	const int BAR_H = 16;
+	const int BAR_Y = 44;
+	const int BAR_X = 6 ;
+	const float CENTS_PER_STEP = 5.0f;
+
+	//determine active bar
+	int active_bar = CENTER_BAR;
+	if(strcmp(note, "--") != 0) {
+		int offset = (int)(cents / CENTS_PER_STEP);
+		active_bar = CENTER_BAR + offset;
+		active_bar = std::max(0, std::min(NUM_BARS - 1, active_bar));
+	}
+
+	//draw the bars
+	for(int i = 0; i < NUM_BARS; i++){
+		int x = BAR_X + i * (BAR_W + BAR_GAP);
+		bool filled = (i == active_bar);
+
+		if(i == CENTER_BAR) {
+			display.DrawRect(x, BAR_Y - 3, x + BAR_W, BAR_Y + BAR_H, true, filled);
+		} else {
+			display.DrawRect(x, BAR_Y, x + BAR_W, BAR_Y + BAR_H, true, filled);
+		}
+	}
+
+	display.Update();
+}
 
 /**
  * Calculates the maximum font size based on the number of characters in a line
@@ -93,11 +238,21 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 
 	for (size_t i = 0; i < size; i++)
 	{
-		if(bypass) {
+		if(current_state == STATE_BYPASS) {
 			out[0][i] = in[0][i] * volume;
-		} else {
+		} else if (current_state == STATE_EFFECT) {
 			//effect
 			out[0][i] = preset_manager.Process(in[0][i]) * volume;
+		} else if (current_state == STATE_TUNER) {
+			out[0][i] = 0;
+
+			//fill the tuner buffer
+			if(!tuner_buffer_ready){
+				tuner_buffer[tuner_buffer_index++] = in[0][i];
+				if(tuner_buffer_index >= TUNER_BUFFER_SIZE) {
+					tuner_buffer_ready = true;
+				}
+			}
 		}
 	}
 }
@@ -140,10 +295,13 @@ int main(void)
 	encoder_dt.Init(seed::A2, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
 	encoder_clk.Init(seed::A3, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
 
+	GPIO encoder_switch;
+	encoder_switch.Init(seed::A5, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
+
 	//init effect led
 	GPIO led;
 	led.Init(seed::A4, GPIO::Mode::OUTPUT);
-	if(!bypass){ led.Write(true); }
+	if(current_state == STATE_EFFECT){ led.Write(true); }
 
 	/** initialize audio **/
 	hw.SetAudioBlockSize(4); // number of samples handled per callback
@@ -156,41 +314,82 @@ int main(void)
 	hw.StartAudio(AudioCallback);
 
 	/** set initial values **/
-
 	DisplayText(preset_manager.GetName());
 
+	bool encoder_switch_held = false;
 	bool switch_held = false; //set switch held flag to 0
 	bool prev_clock_state = true; //set rotary encoder default clock state
 
 	while(1) {
-		//switch processing
+		//tuner switch processing
+		bool encoder_switch_state = encoder_switch.Read();
+		if(!encoder_switch_state && !encoder_switch_held) {
+			//change the state
+			if(current_state != STATE_TUNER){
+				current_state = STATE_TUNER;
+			} else {
+				current_state = pre_tuner;
+			}
+
+			encoder_switch_held = true;
+		} else if (encoder_switch_state) {
+			encoder_switch_held = false;
+		}
+
+		//footswitch processing
 		bool switch_state = switch_pin.Read();
 		if (!switch_state && !switch_held){
-			bypass = !bypass;
+			//change state under the tuner
+			if(pre_tuner == STATE_EFFECT) {
+				pre_tuner = STATE_BYPASS;
+			} else if(pre_tuner == STATE_BYPASS) {
+				pre_tuner = STATE_EFFECT;
+			}
+			//if we are not currently using the tuner, go ahead and change the state
+			if(current_state != STATE_TUNER) {
+				current_state = pre_tuner;
+			}
+
 			switch_held = true;
-			if(bypass){
+
+			//change LED even under the tuner
+			if(pre_tuner == STATE_BYPASS){
 				led.Write(false);
-			} else {
+			} else if (pre_tuner == STATE_EFFECT){
 				led.Write(true);
 			}
-			DisplayText(preset_manager.GetName());
 		} else if (switch_state){
+			//if the switch is not being held down
 			switch_held = false;
 		}
 
-		//rotary encoder processing
-		bool current_clock_state = encoder_clk.Read();
-		if (current_clock_state != prev_clock_state && !current_clock_state){
-			bool current_dt_state = encoder_dt.Read();
-			if (current_clock_state == current_dt_state) {
-				preset_manager.ChangePreset(-1);
-			} else {
-				preset_manager.ChangePreset(1);
+		//rotary encoder processing, will not do anything if tuner is active
+		if(current_state != STATE_TUNER) {
+			bool current_clock_state = encoder_clk.Read();
+			if (current_clock_state != prev_clock_state && !current_clock_state){
+				bool current_dt_state = encoder_dt.Read();
+				if (current_clock_state == current_dt_state) {
+					preset_manager.ChangePreset(-1);
+				} else {
+					preset_manager.ChangePreset(1);
+				}
 			}
-			//update the display
+			prev_clock_state = current_clock_state;
+		}
+
+		//update the display
+		if(current_state == STATE_TUNER) {
+			float freq = DetectPitch(tuner_buffer, TUNER_BUFFER_SIZE, hw.AudioSampleRate());
+			const char* note;
+			float cents;
+			FindNearestNote(freq, &note, &cents);
+			UpdateTunerDisplay(note, cents);
+
+			tuner_buffer_index = 0;
+			tuner_buffer_ready = false;
+		} else {
 			DisplayText(preset_manager.GetName());
 		}
-		prev_clock_state = current_clock_state;
 
 		//delay the system, helps act as debounce
 		System::Delay(20);

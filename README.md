@@ -1,7 +1,7 @@
 # DaisySeed-MultiFXPedal
-A multi-effects guitar pedal platform built on the daisy seed hardware. Still in active development so expect changes 
+A multi-effects guitar pedal platform built on the daisy seed hardware. 
 
-Demo of pedal in current state: https://youtu.be/VmVrhw8N-UY
+Demo of pedal: https://youtu.be/VmVrhw8N-UY
 
 Repository of example presets: https://github.com/bbw1081/Example-DaisySeed-Presets
 
@@ -9,7 +9,7 @@ AI model for preset creation: https://github.com/bbw1081/Guitar-Preset-AI
 
 ## DEPENDENCIES
 
-to get all dependencies make sure to run `git submodule update --init --recursive`
+In the terminal run: `git submodule update --init --recursive`
 
 ## CREDITS
 
@@ -23,12 +23,12 @@ https://github.com/bkshepherd/DaisySeedProjects
 
 ## PRESET FORMAT
 
-The file naming convention is numbers starting from 1 in the order in which you want the presets to be on the pedal
+Presets will be in number order. The number is determined in the const declatarion. In the example preset replace {int} with the number.
 
 Example preset:
 
 ```
-const char preset[] = R"({
+const char preset{int}[] = R"({
     "name": "overdrive wah",
     "effects": ["autowah", "overdrive"],
     "params": [[70, 0.8, 0.8], [0.7]]
@@ -43,11 +43,12 @@ autowah : [dry_wet (0-100), level (0-1), wah (0-1)]
 
 chorus : [delay (ms), feedback (0-1), lfo frequency (Hz)]
 
-decimator : [bits to crush (0-16), downsample factor (float)]
+decimator : [bits to crush (0-16), downsample factor (float)] //bitcrusher
 
 delay : [delay time (ms, up to 1000), feedback (0-1), mix (0-1)]
 
-eq : [31Hz (0-1), 62Hz (0-1), 125Hz (0-1), 250Hz (0-1), 500Hz (0-1), 1kHz (0-1), 2kHz (0-1), 4kHz (0-1), 8kHz (0-1), 16kHz (0-1)] - 10-band parametric EQ (0.5 = no change, -12dB to +12dB range)
+eq : [31Hz (0-1), 62Hz (0-1), 125Hz (0-1), 250Hz (0-1), 500Hz (0-1), 1kHz (0-1), 2kHz (0-1), 4kHz (0-1), 8kHz (0-1), 16kHz (0-1)] 
+ //10-band parametric EQ (0.5 = no change, -12dB to +12dB range)
 
 flanger : [delay (ms), feedback (0-1), lfo frequency (Hz)]
 

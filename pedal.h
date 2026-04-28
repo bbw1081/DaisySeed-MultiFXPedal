@@ -10,5 +10,9 @@
 //preset libraries
 #include "preset_management/PresetManager.h"
 
+//tuner libraries
+#include <cmath>
+#include <cstring>
+
 //effect libraries
 #include "effects/Effects.h"

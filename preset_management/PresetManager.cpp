@@ -21,25 +21,34 @@ void PresetManager::Init(int sample_rate){
     sample_rate_ = sample_rate;
     num_presets_ = 0;
 
-    // Preset array init
-    preset_data_[0] = preset1;
-    preset_data_[1] = preset2;
-    preset_data_[2] = preset3;
-    preset_data_[3] = preset4;
-    preset_data_[4] = preset5;
-    preset_data_[5] = preset6;
-    preset_data_[6] = preset7;
-    preset_data_[7] = preset8;
-    preset_data_[8] = preset9;
-    preset_data_[9] = preset10;
+    for(int i = 1; i <= MAX_PRESETS; i++){
+        char path[MAX_FILENAME];
+        snprintf(path, sizeof(path), "/presets/%d.json", i);
 
-    num_presets_ = 10;
-    SetActivePreset(1);
+        FIL f;
+        FRESULT res = f_open(&f, path, FA_READ);
+        if(res != FR_OK) break; //stop at first missing file
+        f_close(&f);
+
+        snprintf(preset_filenames_[num_presets_], MAX_FILENAME, "/presets/%d.json", i);
+        num_presets_++;
+    }
+
+    if(num_presets_ > 0) SetActivePreset(1);
 }
 
 void PresetManager::SetActivePreset(int val) {
     if(val > 0 && val <= num_presets_) {
         current_preset_num_ = val;
+
+        FIL f;
+        FRESULT res = f_open(&f, preset_filenames_[val-1], FA_READ);
+        if(res != FR_OK) return; //file open failed
+
+        UINT bytes_read;
+        f_read(&f, file_buf_, sizeof(file_buf_) - 1, &bytes_read);
+        f_close(&f);
+        file_buf_[bytes_read] = '\0'; //null terminate
 
         // Set the pointers to shared effect instances in the preset
         current_preset_.wah_ = &wah_;
@@ -63,8 +72,7 @@ void PresetManager::SetActivePreset(int val) {
         current_preset_.revdelay_ = &revdelay_;
 
         JsonDocument doc;
-        deserializeJson(doc, preset_data_[val - 1]);
-
+        deserializeJson(doc, file_buf_);
         current_preset_.Init(doc, sample_rate_);
     }
 }
@@ -89,3 +97,5 @@ void PresetManager::ChangePreset(int val){
 float PresetManager::Process(float in) { return current_preset_.Process(in); }
 
 const char* PresetManager::GetName() { return current_preset_.GetName(); }
+
+int PresetManager::GetNumPresets() { return num_presets_; }

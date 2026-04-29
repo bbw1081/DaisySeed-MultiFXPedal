@@ -11,6 +11,8 @@ AI model for preset creation: https://github.com/bbw1081/Guitar-Preset-AI
 
 In the terminal run: `git submodule update --init --recursive`
 
+make sure USE_LFN is set to 0 in dependencies/libDaisy/src/sys/ffconf.h
+
 ## CREDITS
 
 Reverse Delay effect: https://github.com/AdamFulford/Veno-Echo/blob/main/Veno-Echo/delayline_reverse.h
@@ -23,19 +25,7 @@ https://github.com/bkshepherd/DaisySeedProjects
 
 ## PRESET FORMAT
 
-Presets will be in number order. The number is determined in the const declatarion. In the example preset replace {int} with the number.
-
-Example preset:
-
-```
-const char preset{int}[] = R"({
-    "name": "overdrive wah",
-    "effects": ["autowah", "overdrive"],
-    "params": [[70, 0.8, 0.8], [0.7]]
-})";
-```
-
-Note: when adding or removing presets please update PresetManager.cpp
+TODO: update this section for SD card usage
 
 ## Current Effects
 

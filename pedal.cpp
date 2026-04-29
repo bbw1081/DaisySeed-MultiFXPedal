@@ -31,6 +31,10 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
  * A3		<-- Rotary Encoder CLk
  * A4		<-- LED
  * A5		<-- Rotary Encoder Push Button
+ * D7		<-- SPI CS
+ * D8		<-- SPI SCK
+ * D9 		<-- SPI MISO
+ * D10 		<-- SPI MOSI
  * D11		<-- Display SCL
  * D12		<-- Display SDA
  * out[0] 	<-- 1/4" jack
@@ -39,6 +43,11 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
 
 DaisySeed hw; //daisy seed hardware
 MyOledDisplay display;
+
+//init stuff for sd card
+FatFSInterface fsi;
+FatFSInterface::Config fsi_conf;
+FATFS fs;
 
 //tuner state
 #define TUNER_BUFFER_SIZE 2048
@@ -292,10 +301,9 @@ int main(void)
 	//initilaize rotary encoder inputs
 	GPIO encoder_dt;
 	GPIO encoder_clk;
+	GPIO encoder_switch;
 	encoder_dt.Init(seed::A2, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
 	encoder_clk.Init(seed::A3, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
-
-	GPIO encoder_switch;
 	encoder_switch.Init(seed::A5, GPIO::Mode::INPUT, GPIO::Pull::PULLUP);
 
 	//init effect led
@@ -303,12 +311,25 @@ int main(void)
 	led.Init(seed::A4, GPIO::Mode::OUTPUT);
 	if(current_state == STATE_EFFECT){ led.Write(true); }
 
+	/** Initialize SD card **/
+	fsi_conf.media = FatFSInterface::Config::MEDIA_SD;
+	fsi.Init(fsi_conf);
+	//mount the filesystem
+	System::Delay(10);
+	f_mount(&fs, "/", 1);
+	System::Delay(10);
+
 	/** initialize audio **/
 	hw.SetAudioBlockSize(4); // number of samples handled per callback
 	hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 
 	//init the preset manager
 	preset_manager.Init(hw.AudioSampleRate());
+	if(preset_manager.GetNumPresets() == 0) {
+		while(1){
+			DisplayText("NO SD");
+		}
+	}
 
 	//start audio
 	hw.StartAudio(AudioCallback);

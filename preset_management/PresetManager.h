@@ -20,10 +20,10 @@
 #include "Preset.h"
 #include "../dependencies/ArduinoJson-v7.4.3.h"
 #include "../effects/Effects.h"
-
-#include "../presets/Presets.h"
+#include "ff.h"
 
 static const int MAX_PRESETS = 20;
+static const int MAX_FILENAME = 32;
 
 /**
  * Class to manage currently selected preset
@@ -62,6 +62,8 @@ public:
      */
     const char* GetName();
 
+    int GetNumPresets();
+
 
 private:
     int num_presets_;
@@ -69,7 +71,8 @@ private:
     int current_preset_num_;
     Preset current_preset_;
 
-    const char* preset_data_[MAX_PRESETS];
+    char preset_filenames_[MAX_PRESETS][MAX_FILENAME];
+    char file_buf_[2048];
 
     // Shared effect instances (instantiated once, reused across presets)
     AutowahEffect wah_;

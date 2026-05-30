@@ -24,6 +24,22 @@
 #include "../presets/Presets.h"
 
 static const int MAX_PRESETS = 20;
+static const int MAX_FILENAME = 24;
+static const int MAX_ERROR_MSG = 128;
+
+/**
+ * Enum for error types during preset loading
+ */
+enum PresetError {
+    PRESET_ERR_NONE = 0,
+    PRESET_ERR_SD_INIT_FAIL,     // SD card initialization failed
+    PRESET_ERR_NO_PRESETS_FOUND, // No preset files found
+    PRESET_ERR_FILE_OPEN,        // Failed to open preset file
+    PRESET_ERR_FILE_READ,        // Failed to read preset file
+    PRESET_ERR_JSON_PARSE,       // Failed to parse JSON
+    PRESET_ERR_JSON_CAPACITY,    // JSON document capacity exceeded
+    PRESET_ERR_FS_ERROR,         // File system error
+};
 
 /**
  * Class to manage currently selected preset
@@ -32,6 +48,11 @@ static const int MAX_PRESETS = 20;
  */
 class PresetManager {
 public:
+
+    /**
+     * Constructor - initializes all member variables
+     */
+    PresetManager();
 
     /**
      * Initializes the preset manager
@@ -62,14 +83,46 @@ public:
      */
     const char* GetName();
 
+    /**
+     * returns the number of presets
+     * 
+     * @return the number of presets
+     */
+    int GetNumPresets();
+
+    /**
+     * Sets the active preset to the value input
+     * 
+     * @param val the preset number to set
+     */
+    void SetActivePreset(int val);
+
+    /**
+     * Returns the last error that occurred
+     * 
+     * @return error code from PresetError enum
+     */
+    PresetError GetLastError();
+
+    /**
+     * Returns error message describing the last error
+     * 
+     * @return error message string
+     */
+    const char* GetLastErrorMsg();
 
 private:
     int num_presets_;
     int sample_rate_;
     int current_preset_num_;
     Preset current_preset_;
-
-    const char* preset_data_[MAX_PRESETS];
+    
+    char preset_filenames_[MAX_PRESETS][MAX_FILENAME];
+    char file_buf_[2048];
+    
+    // Error tracking
+    PresetError last_error_;
+    char error_msg_[MAX_ERROR_MSG];
 
     // Shared effect instances (instantiated once, reused across presets)
     AutowahEffect wah_;
@@ -91,14 +144,6 @@ private:
     DelayEffect delay_;
     ReverbEffect reverb_;
     ReverseDelayEffect revdelay_;
-
-
-    /**
-     * Sets the active preset to the value input
-     * 
-     * @param val the preset number to set
-     */
-    void SetActivePreset(int val);
 
     friend class Preset;  // Allow Preset to access shared effect instances
 };

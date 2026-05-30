@@ -17,7 +17,7 @@
  */
 #include "Preset.h"
 
-void Preset::Init(JsonDocument doc, int sample_rate){
+void Preset::Init(JsonDocument& doc, int sample_rate){
     effect_count_ = 0;
     param_count_ = 0;
 

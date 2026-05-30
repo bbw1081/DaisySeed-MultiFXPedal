@@ -14,5 +14,7 @@
 #include <cmath>
 #include <cstring>
 
+#include "per/sdmmc.h"
+
 //effect libraries
 #include "effects/Effects.h"

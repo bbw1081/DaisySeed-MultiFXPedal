@@ -37,7 +37,7 @@ public:
      * @param doc Json document containing the preset data
      * @param sample_rate audio sample rate
      */
-    void Init(JsonDocument doc, int sample_rate);
+    void Init(JsonDocument& doc, int sample_rate);
 
     /**
      * Process audio

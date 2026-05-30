@@ -31,6 +31,12 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
  * A3		<-- Rotary Encoder CLk
  * A4		<-- LED
  * A5		<-- Rotary Encoder Push Button
+ * D1		<-- SD CS
+ * D2		<-- SD DAT2
+ * D3		<-- SD D1
+ * D4		<-- SD D0
+ * D5		<--	SD CMD
+ * D6		<-- SD CLK
  * D11		<-- Display SCL
  * D12		<-- Display SDA
  * out[0] 	<-- 1/4" jack
@@ -39,6 +45,11 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
 
 DaisySeed hw; //daisy seed hardware
 MyOledDisplay display;
+
+//SD card variables
+SdmmcHandler sdmmc;
+FatFSInterface fsi;
+FATFS fs;
 
 //tuner state
 #define TUNER_BUFFER_SIZE 2048
@@ -208,6 +219,11 @@ void DisplayText(const char* text){
 	display.Fill(false); //clear the display
 	display.DrawRect(0, 0, 127, 63, true); //draw a rectangle around the edge
 
+	if(strlen(text) == 0) {
+		text = "NO TEXT";
+	}
+
+
 	const char* spacePos = strchr(text, ' ');
 	if(spacePos == nullptr) {
 		//one line
@@ -303,6 +319,31 @@ int main(void)
 	led.Init(seed::A4, GPIO::Mode::OUTPUT);
 	if(current_state == STATE_EFFECT){ led.Write(true); }
 
+	//init sd card
+	SdmmcHandler::Config sdmmc_conf;
+	sdmmc_conf.Defaults();
+	sdmmc_conf.speed = SdmmcHandler::Speed::SLOW;
+	sdmmc_conf.clock_powersave = false;
+	sdmmc.Init(sdmmc_conf);
+	System::Delay(500);
+
+	FatFSInterface::Config fsi_conf;
+	fsi_conf.media = FatFSInterface::Config::MEDIA_SD;
+	fsi.Init(fsi_conf);
+	System::Delay(500);
+	
+	FRESULT mount_result = f_mount(&fs, "", 0);
+	if(mount_result != FR_OK) {
+		mount_result = f_mount(&fs, "/", 1);
+		if(mount_result != FR_OK) {
+			char buf[32];
+			snprintf(buf, sizeof(buf), "MNT ERR %d", (int)mount_result);
+			DisplayText(buf);
+			while(1) {}
+		}
+	}
+	System::Delay(500);
+
 	/** initialize audio **/
 	hw.SetAudioBlockSize(4); // number of samples handled per callback
 	hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
@@ -310,10 +351,17 @@ int main(void)
 	//init the preset manager
 	preset_manager.Init(hw.AudioSampleRate());
 
+	//test SD card - check both if no presets found OR if there's an error
+	if(preset_manager.GetNumPresets() == 0 || preset_manager.GetLastError() != PRESET_ERR_NONE) {
+		DisplayText(preset_manager.GetLastErrorMsg());
+		while(1) {}
+	}
+
 	//start audio
 	hw.StartAudio(AudioCallback);
 
 	/** set initial values **/
+	preset_manager.SetActivePreset(1);
 	DisplayText(preset_manager.GetName());
 
 	bool encoder_switch_held = false;

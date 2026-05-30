@@ -4,6 +4,8 @@ TARGET = pedal
 # Optimization: Use -Os (optimize for size)
 OPT = -Os
 
+APP_TYPE = BOOT_QSPI
+
 # Sources
 CPP_SOURCES = pedal.cpp \
 effects/AutowahEffect.cpp \
@@ -28,6 +30,8 @@ effects/ReverbEffect.cpp \
 effects/DelayEffect.cpp \
 effects/ReverseDelayEffect.cpp
 
+C_SOURCES = fatfs_unicode.c
+
 # Library Locations
 LIBDAISY_DIR = dependencies/libDaisy/
 DAISYSP_DIR = dependencies/DaisySP/
@@ -38,4 +42,3 @@ USE_DAISYSP_LGPL = 1
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
 include $(SYSTEM_FILES_DIR)/Makefile
-

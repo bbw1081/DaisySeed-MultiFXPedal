@@ -21,3 +21,6 @@ https://stompboxparts.com/knobs/mxr-style-knob/
 
 footswitch
 https://stompboxparts.com/switches/spst-footswitch-soft-touch-square-top/
+
+MicroSD card breakout board
+https://www.adafruit.com/product/4682

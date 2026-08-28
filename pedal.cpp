@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "pedal.h"
+#include "sys/fatfs.h"
 
 using namespace daisy;
 using namespace daisysp;
@@ -31,12 +32,6 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
  * A3		<-- Rotary Encoder CLk
  * A4		<-- LED
  * A5		<-- Rotary Encoder Push Button
- * D1		<-- SD CS
- * D2		<-- SD DAT2
- * D3		<-- SD D1
- * D4		<-- SD D0
- * D5		<--	SD CMD
- * D6		<-- SD CLK
  * D11		<-- Display SCL
  * D12		<-- Display SDA
  * out[0] 	<-- 1/4" jack
@@ -45,11 +40,6 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
 
 DaisySeed hw; //daisy seed hardware
 MyOledDisplay display;
-
-//SD card variables
-SdmmcHandler sdmmc;
-FatFSInterface fsi;
-FATFS fs;
 
 //tuner state
 #define TUNER_BUFFER_SIZE 2048
@@ -97,6 +87,8 @@ const NoteRef NOTE_TABLE[] = {
 const int NOTE_TABLE_SIZE = sizeof(NOTE_TABLE) / sizeof(NOTE_TABLE[0]);
 
 PresetManager preset_manager;
+SdmmcHandler sdmmc;
+FatFSInterface fsi;
 
 /**
  * Detects input pitch using autocorrelation
@@ -219,11 +211,6 @@ void DisplayText(const char* text){
 	display.Fill(false); //clear the display
 	display.DrawRect(0, 0, 127, 63, true); //draw a rectangle around the edge
 
-	if(strlen(text) == 0) {
-		text = "NO TEXT";
-	}
-
-
 	const char* spacePos = strchr(text, ' ');
 	if(spacePos == nullptr) {
 		//one line
@@ -292,6 +279,30 @@ int main(void)
     display.Update();
     System::Delay(100);
 
+	//initialize the SD card and mount its filesystem
+	SdmmcHandler::Config sd_cfg;
+	sd_cfg.Defaults();
+	sd_cfg.speed = SdmmcHandler::Speed::SLOW;
+	sd_cfg.width = SdmmcHandler::BusWidth::BITS_4;
+	if(sdmmc.Init(sd_cfg) != SdmmcHandler::Result::OK) {
+		DisplayText("SD INIT ERR");
+		while(1) {}
+	}
+
+	FatFSInterface::Config fsi_cfg;
+	fsi_cfg.media = FatFSInterface::Config::MEDIA_SD;
+	FatFSInterface::Result fsi_result = fsi.Init(fsi_cfg);
+	FRESULT mount_result = FR_INT_ERR;
+	if(fsi_result == FatFSInterface::Result::OK) {
+		mount_result = f_mount(&fsi.GetSDFileSystem(), "/", 1);
+	}
+	if(fsi_result != FatFSInterface::Result::OK || mount_result != FR_OK) {
+		char mount_error[32];
+		snprintf(mount_error, sizeof(mount_error), "MOUNT ERR %d", (int)mount_result);
+		DisplayText(mount_error);
+		while(1) {}
+	}
+
 	/** initialize peripheral inputs and outputs **/
 	const int num_adc_channels = 1; //number of adc channels in use
 	AdcChannelConfig adc_config[num_adc_channels];
@@ -318,31 +329,6 @@ int main(void)
 	GPIO led;
 	led.Init(seed::A4, GPIO::Mode::OUTPUT);
 	if(current_state == STATE_EFFECT){ led.Write(true); }
-
-	//init sd card
-	SdmmcHandler::Config sdmmc_conf;
-	sdmmc_conf.Defaults();
-	sdmmc_conf.speed = SdmmcHandler::Speed::SLOW;
-	sdmmc_conf.clock_powersave = false;
-	sdmmc.Init(sdmmc_conf);
-	System::Delay(500);
-
-	FatFSInterface::Config fsi_conf;
-	fsi_conf.media = FatFSInterface::Config::MEDIA_SD;
-	fsi.Init(fsi_conf);
-	System::Delay(500);
-	
-	FRESULT mount_result = f_mount(&fs, "", 0);
-	if(mount_result != FR_OK) {
-		mount_result = f_mount(&fs, "/", 1);
-		if(mount_result != FR_OK) {
-			char buf[32];
-			snprintf(buf, sizeof(buf), "MNT ERR %d", (int)mount_result);
-			DisplayText(buf);
-			while(1) {}
-		}
-	}
-	System::Delay(500);
 
 	/** initialize audio **/
 	hw.SetAudioBlockSize(4); // number of samples handled per callback

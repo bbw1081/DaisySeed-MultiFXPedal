@@ -7,9 +7,17 @@ Repository of example presets: https://github.com/bbw1081/Example-DaisySeed-Pres
 
 AI model for preset creation: https://github.com/bbw1081/Guitar-Preset-AI
 
-## DEPENDENCIES
+## TO GET DEPENDENCIES
 
 In the terminal run: `git submodule update --init --recursive`
+
+## TO PROGRAM PEDAL
+
+1. Flash the daisy bootloader found at https://flash.daisy.audio/
+
+2. Rapidly press Reset twice and then boot on the daisy seed
+
+3. In the command pallete run `task build_and_program_dfu`
 
 ## CREDITS
 

@@ -4,6 +4,7 @@ TARGET = pedal
 # Optimization: Use -Os (optimize for size)
 OPT = -Os
 
+# QSPI Boot, allows for larger programs through the daisy bootloader
 APP_TYPE = BOOT_QSPI
 
 # Sources

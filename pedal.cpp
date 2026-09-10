@@ -15,15 +15,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "pedal.h"
 
-using namespace daisy;
-using namespace daisysp;
-
-//using 128x64 oled I2C display
-using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
-
-/**
+ /**
  * DAISY SEED PINOUT
  * A0     	<-- Potentiometer A10K ohms
  * A1     	<-- SPST Momentary Footswitch
@@ -37,18 +30,49 @@ using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
  * in[0]  	<-- 1/4" jack
  */
 
+ /* INCLUDES */
+//daisy seed libraries
+#include "daisy_seed.h"
+#include "daisysp.h"
+
+//display libraries
+#include <stdio.h>
+#include <string.h>
+#include "dev/oled_ssd130x.h"
+
+//preset libraries
+#include "preset_management/PresetManager.h"
+
+//tuner libraries
+#include <cmath>
+#include <cstring>
+
+//effect libraries
+#include "effects/Effects.h"
+
+/* declare namespaces */
+using namespace daisy;
+using namespace daisysp;
+
+//using 128x64 oled I2C display
+using MyOledDisplay = OledDisplay<SSD130xI2c128x64Driver>;
+
+/* declare vars*/
 DaisySeed hw; //daisy seed hardware
 MyOledDisplay display;
+PresetManager preset_manager;
 
+//pedal state
+enum PedalState { STATE_BYPASS, STATE_EFFECT, STATE_TUNER };
+PedalState current_state = STATE_EFFECT;
+PedalState pre_tuner = STATE_EFFECT;
+
+/* Tuner Code */
 //tuner state
 #define TUNER_BUFFER_SIZE 2048
 float tuner_buffer[TUNER_BUFFER_SIZE];
 int tuner_buffer_index = 0;
 bool tuner_buffer_ready = false;
-
-enum PedalState { STATE_BYPASS, STATE_EFFECT, STATE_TUNER };
-PedalState current_state = STATE_EFFECT;
-PedalState pre_tuner = STATE_EFFECT;
 
 //Note reference struct for tuner
 struct NoteRef {
@@ -84,8 +108,6 @@ const NoteRef NOTE_TABLE[] = {
     {"E6",  1318.51f},
 };
 const int NOTE_TABLE_SIZE = sizeof(NOTE_TABLE) / sizeof(NOTE_TABLE[0]);
-
-PresetManager preset_manager;
 
 /**
  * Detects input pitch using autocorrelation
@@ -146,6 +168,9 @@ void FindNearestNote(float freq, const char** note_name, float* cents) {
 	*cents = 1200.0f * log2f(freq / NOTE_TABLE[best_index].freq);
 }
 
+/**
+ * Updates the display of the tuner
+ */
 void UpdateTunerDisplay(const char* note, float cents) {
 	display.Fill(false);
 
@@ -257,8 +282,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 	}
 }
 
-int main(void)
-{
+int main(void) {
 	//initialize hardware
 	hw.Init();
 
@@ -320,6 +344,7 @@ int main(void)
 	bool switch_held = false; //set switch held flag to 0
 	bool prev_clock_state = true; //set rotary encoder default clock state
 
+	/* MAIN LOOP */
 	while(1) {
 		//tuner switch processing
 		bool encoder_switch_state = encoder_switch.Read();
@@ -395,4 +420,3 @@ int main(void)
 		System::Delay(20);
 	}
 }
-

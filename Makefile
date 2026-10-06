@@ -1,9 +1,6 @@
 # Project Name
 TARGET = pedal
 
-# Optimization: Use -Os (optimize for size)
-OPT = -Os
-
 APP_TYPE = BOOT_QSPI
 
 # Sources

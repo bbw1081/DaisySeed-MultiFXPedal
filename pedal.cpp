@@ -283,7 +283,7 @@ int main(void)
 	SdmmcHandler::Config sd_cfg;
 	sd_cfg.Defaults();
 	sd_cfg.speed = SdmmcHandler::Speed::SLOW;
-	sd_cfg.width = SdmmcHandler::BusWidth::BITS_4;
+	sd_cfg.width = SdmmcHandler::BusWidth::BITS_1;
 	if(sdmmc.Init(sd_cfg) != SdmmcHandler::Result::OK) {
 		DisplayText("SD INIT ERR");
 		while(1) {}

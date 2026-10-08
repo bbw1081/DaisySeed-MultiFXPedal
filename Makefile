@@ -27,14 +27,14 @@ effects/ReverbEffect.cpp \
 effects/DelayEffect.cpp \
 effects/ReverseDelayEffect.cpp
 
-C_SOURCES = fatfs_unicode.c
-
 # Library Locations
 LIBDAISY_DIR = dependencies/libDaisy/
 DAISYSP_DIR = dependencies/DaisySP/
 
 # Enable DaisySP LGPL features (required for ReverbSc)
 USE_DAISYSP_LGPL = 1
+
+USE_FATFS = 1
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
